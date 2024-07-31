@@ -16,11 +16,12 @@ defmodule BlueApi.Application do
       {Phoenix.PubSub, name: BlueApi.PubSub},
       # Start the Endpoint (http/https)
       BlueApiWeb.Endpoint,
+      {Goth, name: BlueApi.Goth}
+
       # Start a worker by calling: BlueApi.Worker.start_link(arg)
       # {BlueApi.Worker, arg}
-      BlueApi.Node,
-      BlueApi.Indexer,
-      {Kujira.Invalidator, pubsub: BlueApi.PubSub}
+      # BlueApi.Node
+      # {Kujira.Invalidator, pubsub: BlueApi.PubSub}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

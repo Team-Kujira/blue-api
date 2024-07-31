@@ -45,7 +45,9 @@ defmodule BlueApi.MixProject do
       {:kujira, "~> 0.1.61"},
       {:websockex, "~> 0.4.3"},
       {:cors_plug, "~> 2.0"},
-      {:gun, "~> 2.0.1", hex: :grpc_gun, override: true}
+      {:gun, "~> 2.0.1", hex: :grpc_gun, override: true},
+      {:google_api_big_query, "~> 0.79"},
+      {:goth, "~> 1.3.0"}
     ]
   end
 
