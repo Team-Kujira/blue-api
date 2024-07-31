@@ -1,5 +1,7 @@
 defmodule BlueApi.Revenue do
   require Logger
+  alias BlueApi.Revenue.Snapshot
+  alias BlueApi.Repo
   alias GoogleApi.BigQuery.V2.Model.TableRow
   alias GoogleApi.BigQuery.V2.Model.TableCell
   alias GoogleApi.BigQuery.V2.Api.Jobs
@@ -8,13 +10,26 @@ defmodule BlueApi.Revenue do
   alias GoogleApi.BigQuery.V2.Model.QueryResponse
   alias GoogleApi.BigQuery.V2.Model.JobReference
   alias GoogleApi.BigQuery.V2.Model.GetQueryResultsResponse
+  import Ecto.Query
 
   @project_id "kujira-api"
   @regex ~r'([0-9]+)([a-zA-Z][a-zA-Z0-9/:._-]{2,127})'
 
   def total_revenue(from, to) do
-    with {:ok, rows} when is_list(rows) <- revenue_query(from, to) do
-      {:ok, Enum.reduce(rows, %{}, &add_result/2)}
+    case Repo.one(from s in Snapshot, where: s.from == ^from and s.to == ^to) do
+      nil ->
+        with {:ok, rows} when is_list(rows) <- revenue_query(from, to) do
+          revenue = Enum.reduce(rows, %{}, &add_result/2)
+
+          %Snapshot{}
+          |> Snapshot.changeset(%{from: from, to: to, revenue: revenue})
+          |> Repo.insert()
+
+          {:ok, revenue}
+        end
+
+      %{revenue: revenue} ->
+        {:ok, revenue}
     end
   end
 
@@ -27,7 +42,7 @@ defmodule BlueApi.Revenue do
       AND a.tx_id=b.tx_id
       AND a.event_index=b.event_index
       AND b.attribute_key='amount'
-      AND a.ingestion_timestamp > (TIMESTAMP '#{NaiveDateTime.to_iso8601(from)}')
+      AND a.ingestion_timestamp >= (TIMESTAMP '#{NaiveDateTime.to_iso8601(from)}')
       AND a.ingestion_timestamp < (TIMESTAMP '#{NaiveDateTime.to_iso8601(to)}')
     ORDER BY a.block_height DESC
     """
