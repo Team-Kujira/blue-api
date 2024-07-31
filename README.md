@@ -1,6 +1,6 @@
 # BlueApi
 
-APIs used to power [https://blue.kujira.network](https://blue.kujira.network).
+APIs used for general ecosystem and token metrics
 
 Publicly available endpoint available at [https://api.blue.kujira.network](https://api.blue.kujira.network), however self-hosting requires only a gRPC connection and is recommended via [Gigalixir](http://gigalixir.com)
 
