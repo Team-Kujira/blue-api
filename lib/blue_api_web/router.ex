@@ -7,6 +7,7 @@ defmodule BlueApiWeb.Router do
 
   scope "/api", BlueApiWeb do
     pipe_through :api
+    resources "/revenue", RevenueController
   end
 
   # Enables LiveDashboard only for development
