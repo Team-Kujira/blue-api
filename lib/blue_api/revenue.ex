@@ -47,6 +47,8 @@ defmodule BlueApi.Revenue do
     ORDER BY a.block_height DESC
     """
 
+    IO.inspect(query)
+
     request = %QueryRequest{
       query: query,
       useLegacySql: false,
@@ -72,13 +74,9 @@ defmodule BlueApi.Revenue do
     conn = Connection.new(token.token)
 
     case Jobs.bigquery_jobs_query(conn, @project_id, body: request) do
-      {:ok, %QueryResponse{jobComplete: true, rows: rows}} ->
-        {:ok, rows}
-
       {:ok,
        %QueryResponse{
-         jobReference: %JobReference{jobId: id},
-         jobComplete: false
+         jobReference: %JobReference{jobId: id}
        }} ->
         query_job(conn, id)
 
