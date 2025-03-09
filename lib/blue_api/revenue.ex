@@ -18,15 +18,7 @@ defmodule BlueApi.Revenue do
   def total_revenue(from, to) do
     case Repo.one(from s in Snapshot, where: s.from == ^from and s.to == ^to) do
       nil ->
-        with {:ok, rows} when is_list(rows) <- revenue_query(from, to) do
-          revenue = Enum.reduce(rows, %{}, &add_result/2)
-
-          %Snapshot{}
-          |> Snapshot.changeset(%{from: from, to: to, revenue: revenue})
-          |> Repo.insert()
-
-          {:ok, revenue}
-        end
+        {:ok, %{}}
 
       %{revenue: revenue} ->
         {:ok, revenue}
